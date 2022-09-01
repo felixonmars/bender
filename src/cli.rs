@@ -57,6 +57,9 @@ pub fn main() -> Result<()> {
         .subcommand(cmd::checkout::new())
         .subcommand(cmd::import::new());
 
+    #[cfg(feature = "pickle")]
+    let app = app.subcommand(cmd::pickle::new());
+
     // Add the `--debug` option in debug builds.
     let app = if cfg!(debug_assertions) {
         app.arg(
@@ -236,6 +239,10 @@ pub fn main() -> Result<()> {
         Some(("checkout", matches)) => cmd::checkout::run(&sess, matches),
         Some(("update", _)) => Ok(()),
         Some(("import", matches)) => cmd::import::run(&sess, matches),
+
+        #[cfg(feature = "pickle")]
+        Some(("pickle", matches)) => cmd::pickle::run(&sess, matches),
+
         Some((plugin, matches)) => execute_plugin(&sess, plugin, matches.values_of_os("")),
         _ => Ok(()),
     }

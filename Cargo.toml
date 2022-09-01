@@ -1,6 +1,6 @@
 [package]
 name = "bender"
-version = "0.26.1"
+version = "0.26.1-pickle"
 authors = ["Fabian Schuiki <fschuiki@iis.ee.ethz.ch>", "Andreas Kurth <akurth@iis.ee.ethz.ch>", "Michael Rogenmoser <michael@rogenmoser.us>"]
 repository = "https://github.com/pulp-platform/bender"
 description = "A dependency management tool for hardware projects."
@@ -30,3 +30,11 @@ tabwriter = "1.2.1"
 indexmap = "1.8.1"
 tempdir = "0.3.7"
 glob = "0.3"
+
+anyhow = { version = "1.0", optional = true }
+log = { version = "0.4", optional = true }
+simple_logger = { version = "1.6", optional = true }
+morty = { version = "0.8.0", optional = true }
+
+[features]
+pickle = [ "dep:anyhow", "dep:log", "dep:simple_logger", "dep:morty" ]
