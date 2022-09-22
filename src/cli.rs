@@ -55,7 +55,8 @@ pub fn main() -> Result<()> {
         .subcommand(cmd::config::new())
         .subcommand(cmd::script::new())
         .subcommand(cmd::checkout::new())
-        .subcommand(cmd::import::new());
+        .subcommand(cmd::import::new())
+        .subcommand(cmd::translate::new());
 
     // Add the `--debug` option in debug builds.
     let app = if cfg!(debug_assertions) {
@@ -75,6 +76,10 @@ pub fn main() -> Result<()> {
     // Enable debug outputs if needed.
     if matches.is_present("debug") {
         ENABLE_DEBUG.store(true, std::sync::atomic::Ordering::Relaxed);
+    }
+
+    if let Some(("translate", intern_matches)) = matches.subcommand() {
+        return cmd::translate::run(intern_matches);
     }
 
     let mut force_fetch = false;
@@ -244,7 +249,7 @@ pub fn main() -> Result<()> {
 /// Find the root directory of a package.
 ///
 /// Traverses the directory hierarchy upwards until a `Bender.yml` file is found.
-fn find_package_root(from: &Path) -> Result<PathBuf> {
+pub fn find_package_root(from: &Path) -> Result<PathBuf> {
     use std::os::unix::fs::MetadataExt;
 
     // Canonicalize the path. This will resolve any intermediate links.
