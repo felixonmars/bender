@@ -97,8 +97,6 @@ pub fn run(matches: &ArgMatches) -> Result<()> {
 
             let mut dependencies: HashMap<String, Dependency> = HashMap::new();
 
-            // let mut sources = Sources::new();
-
             let mut export_include_dirs = Vec::new();
 
             // Parse all dependencies
@@ -106,12 +104,12 @@ pub fn run(matches: &ArgMatches) -> Result<()> {
                 for (_fileset_name, fileset) in filesets {
                     if let Value::Sequence(depend) = &fileset["depend"] {
                         for dependency in depend {
-                            let (dep_name, dep_version) = if let Value::String(x) = dependency {
+                            let (dep_start, dep_name, dep_version) = if let Value::String(x) = dependency {
                                 let split = x.split(':').collect::<Vec<_>>();
                                 if split.len() > 3 {
-                                    (split[2].to_string(), Some(split[3].to_string()))
+                                    (split[0].to_string(), split[2].to_string(), Some(split[3].to_string()))
                                 } else {
-                                    (split[2].to_string(), None)
+                                    (split[0].to_string(), split[2].to_string(), None)
                                 }
                             } else {
                                 return Err(Error::new(format!(
@@ -120,7 +118,16 @@ pub fn run(matches: &ArgMatches) -> Result<()> {
                                 )));
                             };
                             if let Some(version) = dep_version {
-                                if let Ok(semver_version) = semver::VersionReq::parse(&version) {
+                                let mut version_string = "".to_string();
+                                for character in dep_start.chars() {
+                                    if vec!['>', '<', '=', '~', '^'].contains(&character) {
+                                        version_string.push(character);
+                                    } else {
+                                        break;
+                                    }
+                                }
+                                version_string.push_str(&version);
+                                if let Ok(semver_version) = semver::VersionReq::parse(&version_string) {
                                     dependencies.insert(
                                         dep_name.clone(),
                                         Dependency::Version(semver_version),
@@ -213,8 +220,6 @@ pub fn run(matches: &ArgMatches) -> Result<()> {
                 None
             };
 
-            // println!("{:?}", core);
-
             Ok(Manifest {
                 package,
                 dependencies,
@@ -228,8 +233,6 @@ pub fn run(matches: &ArgMatches) -> Result<()> {
                 },
                 external_import: Vec::new(),
             })
-
-            // Err(Error::new("unimplemented"))
         }
         "flist" => {
             // do flist stuff
@@ -257,31 +260,20 @@ pub fn run(matches: &ArgMatches) -> Result<()> {
                 serde_yaml::to_string(&manifest)
                     .map_err(|cause| Error::chain("Unable to serialize", cause))?
             )?;
+            println!("`Bender.yml` file generated based on the input file.");
         }
         Some("core") => {
             // Catch unnecessary conversion
             if input_file.extension().unwrap().to_str() == Some("core") {
                 return Err(Error::new("Input and output both .core files."));
             }
-            unimplemented!()
+            unimplemented!();
         }
         Some("flist") => {
-            unimplemented!()
+            unimplemented!();
         }
         _ => unreachable!(),
     };
 
     Ok(())
 }
-
-// /// A partial FuseSoC file
-// pub struct PartialFuse {
-//     pub capi: Option<u32>,
-//     pub name: Option<String>,
-//     pub description: Option<String>,
-//     pub filesets: Option<HashMap<String, >>
-// }
-
-// pub struct PartialFuseFileSet {
-//     pub files: Option<Vec<>>
-// }
