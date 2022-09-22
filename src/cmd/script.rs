@@ -3,7 +3,7 @@
 
 //! The `script` subcommand.
 
-use clap::{Arg, ArgMatches, Command};
+use clap::{Arg, ArgMatches, Command, PossibleValue};
 use tokio::runtime::Runtime;
 
 use crate::error::*;
@@ -30,18 +30,18 @@ pub fn new<'a>() -> Command<'a> {
             Arg::new("format")
                 .help("Format of the generated script")
                 .required(true)
-                .possible_values(&[
-                    "flist",
-                    "vsim",
-                    "vcs",
-                    "verilator",
-                    "synopsys",
-                    "formality",
-                    "riviera",
-                    "genus",
-                    "vivado",
-                    "vivado-sim",
-                    "precision",
+                .value_parser([
+                    PossibleValue::new("flist"),
+                    PossibleValue::new("vsim"),
+                    PossibleValue::new("vcs"),
+                    PossibleValue::new("verilator"),
+                    PossibleValue::new("synopsys"),
+                    PossibleValue::new("formality"),
+                    PossibleValue::new("riviera"),
+                    PossibleValue::new("genus"),
+                    PossibleValue::new("vivado"),
+                    PossibleValue::new("vivado-sim"),
+                    PossibleValue::new("precision"),
                 ]),
         )
         .arg(
@@ -119,9 +119,9 @@ pub fn new<'a>() -> Command<'a> {
                 .help("Choose compilation mode for Riviera-PRO option: separate/common (Riviera-PRO only)")
                 .takes_value(true)
                 .default_value("common")
-                .possible_values(&[
-                    "separate",
-                    "common",
+                .value_parser([
+                    PossibleValue::new("separate"),
+                    PossibleValue::new("common"),
                 ])
         )
         .arg(
