@@ -7,6 +7,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 ## Unreleased
 ### Added
 - Add global include directory option in script command.
+- Add flag for `rtl` target to files without target in script and sources.
 
 ### Changed
 - Complete revamp of script generation, now using templates. Script formats are homogenized and custom templates are enabled.
