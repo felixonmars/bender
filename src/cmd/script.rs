@@ -814,7 +814,7 @@ set search_path_initial $search_path
         {% for incdir in group.incdirs %}\
             lappend search_path \"$ROOT{{ incdir | replace(from=root, to='') }}\"\n\
         {% endfor %}\n\
-        {% if abort_on_error %}if {[catch { {% endif %}analyze -format \
+        {% if abort_on_error %}if {0 == [{% endif %}analyze -format \
         {% if group.file_type == 'verilog' %}sv{% elif group.file_type == 'vhdl' %}vhdl{% endif %} \\\n    \
         {% for define in group.defines %}\
             {% if loop.first %}-define { \\\n        {% endif %}\
@@ -826,7 +826,7 @@ set search_path_initial $search_path
             {{ '    ' }}\"{{ file | replace(from=root, to='$ROOT') }}\" \\\n    \
         {% endfor %}\
         ]\n\
-        {% if abort_on_error %}}]} {return 1}\
+        {% if abort_on_error %}]} {return 1}\
         {% endif %}\n\
     {% endfor %}\n\
 {% else %}{# compilation_mode == 'common' #}\
@@ -836,7 +836,7 @@ set search_path_initial $search_path
             {% for incdir in all_incdirs %}\
                 lappend search_path \"$ROOT{{ incdir | replace(from=root, to='') }}\"\n\
             {% endfor %}\n\
-            {% if abort_on_error %}if {[catch { {% endif %}analyze -format sv \\\n    \
+            {% if abort_on_error %}if {0 == [{% endif %}analyze -format sv \\\n    \
             {% for define in all_defines %}\
                 {% if loop.first %}-define { \\\n        {% endif %}\
                 {{ define.0 | upper }}{% if define.1 %}={{ define.1 }}{% endif %}\
@@ -847,19 +847,19 @@ set search_path_initial $search_path
         {{ '    ' }}\"{{ file | replace(from=root, to='$ROOT') }}\" \\\n    \
         {% if loop.last %}\
             ]\n\
-            {% if abort_on_error %}}]} {return 1}\
+            {% if abort_on_error %}]} {return 1}\
             {% endif %}\n\
         {% endif %}\
     {% endfor %}\n\
     {% for file in all_vhdl %}\
         {% if loop.first %}
-            {% if abort_on_error %}if {[catch { {% endif %}analyze -format vhdl \\\n    \
+            {% if abort_on_error %}if {0 == [{% endif %}analyze -format vhdl \\\n    \
             [list \\\n    \
         {% endif %}\
         {{ '    ' }}\"{{ file | replace(from=root, to='$ROOT') }}\" \\\n    \
         {% if loop.last %}\
             ]\n\
-            {% if abort_on_error %}}]} {return 1}\
+            {% if abort_on_error %}]} {return 1}\
             {% endif %}\n\
         {% endif %}\
     {% endfor %}\n\
